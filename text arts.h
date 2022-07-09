@@ -1,0 +1,6 @@
+#ifndef TEXT_ARTS_H_INCLUDED
+#define TEXT_ARTS_H_INCLUDED
+
+
+
+#endif // TEXT_ARTS_H_INCLUDED
