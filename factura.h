@@ -41,7 +41,8 @@ class Factura{
         float subTotal;
         float total;
         float IVATotal;
-        //Producto *productos[PRODUCTOS_MAXIMOS];
+        Producto *productos[PRODUCTOS_MAXIMOS];
+        int cantidadProductos;
     public:
         Factura(char* nE, char* rE, char* tPE, char* nR, char* rR, char* tPR,
                 char* h, char* nF, float sT, float t, float iT){
@@ -56,6 +57,7 @@ class Factura{
             setSubTotal(sT);
             setTotal(t);
             setIVATotal(iT);
+            cantidadProductos=0;
         }
 
         void setNombreEmisor(char* nE){
@@ -135,6 +137,22 @@ class Factura{
             return IVATotal;
         }
 
+        void setProducto(Producto* producto){
+            productos[cantidadProductos]=producto;
+            aumentarCantidadProductos();
+        }
+
+        void getProducto(int indice){
+            imprimirProducto(*productos[indice]);
+        }
+
+        void aumentarCantidadProductos(){
+            cantidadProductos++;
+        }
+        int getCantidadProductos(){
+            return cantidadProductos;
+        }
+
 };
 
 int cantidadFacturas=0;
@@ -150,6 +168,7 @@ void registrarDatosReceptor();
 void registrarDatosAdicionales();
 int validarRFC(int longitud);
 void escogerMoralOFiscal(int tipoPersona, bool guardarEmisor);
+void crearProducto();
 
 void crearFactura(){
     char vacio[]="";
@@ -157,9 +176,12 @@ void crearFactura(){
     facturas[cantidadFacturas]=new Factura(vacio, vacio, vacio, vacio, vacio,
                                            vacio, vacio, vacio, 0.0, 0.0, 0.0);
     cin.get();
+    crearProducto();
     registrarDatosEmisor();
     cin.get();
     registrarDatosReceptor();
+
+
 }
 
 void inicializarArreglosMoralesFiscales(){
@@ -261,6 +283,15 @@ void registrarDatosReceptor(){
     facturas[cantidadFacturas]->setRFCReceptor(RFCReceptor);
 }
 
-
+void crearProducto(){
+    char vacio[]="";
+    Producto *producto=new Producto(vacio, 0.0, 0.0, 0);
+    capturarProducto(*producto);
+    facturas[cantidadFacturas]->setProducto(producto);
+    facturas[cantidadFacturas]->getProducto(0);
+    cout << producto->getClave() << "\t" << producto->getDescripcion() << endl;
+    pausa();
+    delete producto;
+}
 
 #endif // FACTURA_H_INCLUDED

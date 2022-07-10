@@ -3,6 +3,7 @@
 #include "helpers.h"
 #include "usuario.h"
 #include "factura.h"
+#include "producto.h"
 
 #define USUARIOS_MAXIMOS 3
 
@@ -99,7 +100,7 @@ void inicializar(){
     usuarios[C_0]=new Usuario((char*)USUARIO, (char*)CLAVE, (char*)PUESTO, C_0);
     usuarios[C_1]=new Usuario((char*)USUARIO2, (char*)CLAVE2, (char*)PUESTO2, C_0);
     usuarios[C_2]=new Usuario((char*)USUARIO3, (char*)CLAVE3, (char*)PUESTO3, C_0);
-
+    generarBaseDeDatos();
 }
 
 void iniciarSesion(){
