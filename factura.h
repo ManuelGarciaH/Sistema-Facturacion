@@ -1,6 +1,7 @@
+#include "producto.h"
+#include "domicilio.h"
 #ifndef FACTURA_H_INCLUDED
 #define FACTURA_H_INCLUDED
-#include "producto.h"
 #define TAMANIO_NOMBRE_EMISOR 50
 #define TAMANIO_NOMBRE_RECEPTOR 50
 #define TAMANIO_TIPO_PERSONA_EMISOR 20
@@ -43,6 +44,7 @@ class Factura{
         float IVATotal;
         Producto *productos[PRODUCTOS_MAXIMOS];
         int cantidadProductos;
+        Domicilio *domicilioEmisor, *domicilioReceptor;
     public:
         Factura(char* nE, char* rE, char* tPE, char* nR, char* rR, char* tPR,
                 char* h, char* nF, float sT, float t, float iT){
@@ -146,6 +148,7 @@ class Factura{
             imprimirProducto(*productos[indice]);
         }
 
+
         void aumentarCantidadProductos(){
             cantidadProductos++;
         }
@@ -153,6 +156,20 @@ class Factura{
             return cantidadProductos;
         }
 
+        void setDomicilioEmisor(Domicilio* dE){
+            domicilioEmisor=dE;
+        }
+
+        void setDomicilioReceptor(Domicilio* dR){
+            domicilioReceptor=dR;
+        }
+
+        void getDomicilioEmisor(){
+            imprimirDomicilioEmisor(*domicilioEmisor);
+        }
+        void getDomicilioReceptor(){
+            imprimirDomicilioReceptor(*domicilioReceptor);
+        }
 };
 
 int cantidadFacturas=0;
@@ -168,7 +185,9 @@ void registrarDatosReceptor();
 void registrarDatosAdicionales();
 int validarRFC(int longitud);
 void escogerMoralOFiscal(int tipoPersona, bool guardarEmisor);
-void crearProducto();
+void registrarProducto();
+void registrarDomicilioEmisor();
+void registrarDomicilioReceptor();
 
 void crearFactura(){
     char vacio[]="";
@@ -176,11 +195,18 @@ void crearFactura(){
     facturas[cantidadFacturas]=new Factura(vacio, vacio, vacio, vacio, vacio,
                                            vacio, vacio, vacio, 0.0, 0.0, 0.0);
     cin.get();
-    crearProducto();
     registrarDatosEmisor();
     cin.get();
-    registrarDatosReceptor();
+    registrarDomicilioEmisor();
 
+    registrarDatosReceptor();
+    cin.get();
+    registrarDomicilioReceptor();
+
+    registrarProducto();
+
+
+    cantidadFacturas++;
 
 }
 
@@ -283,15 +309,32 @@ void registrarDatosReceptor(){
     facturas[cantidadFacturas]->setRFCReceptor(RFCReceptor);
 }
 
-void crearProducto(){
-    char vacio[]="";
-    Producto *producto=new Producto(vacio, 0.0, 0.0, 0);
-    capturarProducto(*producto);
-    facturas[cantidadFacturas]->setProducto(producto);
-    facturas[cantidadFacturas]->getProducto(0);
-    cout << producto->getClave() << "\t" << producto->getDescripcion() << endl;
+void registrarProducto(){
+    int opcion;
+    do{
+        facturas[cantidadFacturas]->setProducto(capturarProducto());
+        cout << "quieres capturar otro producto? 1)Si  Otro numero)No \n-> ";
+        cin >> opcion;
+        if(facturas[cantidadFacturas]->getCantidadProductos()==3){
+            cout << "Limite de productos alcanzados" << endl;
+        }
+        system(CLEAR);
+    }while(opcion==C_1 && facturas[cantidadFacturas]->getCantidadProductos()!=3);
+    //facturas[cantidadFacturas]->getProducto(0);
+    //facturas[cantidadFacturas]->getProducto(1);
+}
+
+void registrarDomicilioEmisor(){
+    int opcion;
+    facturas[cantidadFacturas]->setDomicilioEmisor(capturarDomicilio());
+    //facturas[cantidadFacturas]->getDomicilioEmisor();
     pausa();
-    delete producto;
+}
+void registrarDomicilioReceptor(){
+    int opcion;
+    facturas[cantidadFacturas]->setDomicilioReceptor(capturarDomicilio());
+    //facturas[cantidadFacturas]->getDomicilioReceptor();
+    pausa();
 }
 
 #endif // FACTURA_H_INCLUDED
