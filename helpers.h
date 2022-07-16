@@ -31,6 +31,13 @@ void espacios(int longitudPalabra, int limite){
     cout << "|";
 }
 
+char* convertirEnteroACadena(int entero, char* cadena){
+    stringstream conversor;
+    conversor << entero;
+    conversor >> cadena;
+    return cadena;
+}
+
 int convertirCadenaAEntero(string cadena){
     int entero;
     stringstream conversor;

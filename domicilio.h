@@ -78,8 +78,7 @@ class Domicilio{
 };
 
 Domicilio* capturarDomicilio();
-void imprimirDomicilioEmisor(Domicilio &domicilioEmisor);
-void imprimirDomicilioReceptor(Domicilio &domicilioReceptor);
+void imprimirDomicilioEmisorReceptor(Domicilio &dE, Domicilio &dR);
 
 Domicilio* capturarDomicilio(){
     char colonia[TAMANIO_COLONIA+1], calle[TAMANIO_CALLE+1], ciudad[TAMANIO_CIUDAD+1];
@@ -104,24 +103,49 @@ Domicilio* capturarDomicilio(){
     return new Domicilio(colonia, calle, ciudad, estado, pais, numero, codigoPostal);
 }
 
-void imprimirDomicilioEmisor(Domicilio &domicilioEmisor){
-    cout << domicilioEmisor.getPais() << endl;
-    cout << domicilioEmisor.getEstado() << endl;
-    cout << domicilioEmisor.getCiudad() << endl;
-    cout << domicilioEmisor.getColonia() << endl;
-    cout << domicilioEmisor.getCalle() << endl;
-    cout << domicilioEmisor.getNumero() << endl;
-    cout << domicilioEmisor.getCodigoPostal() << endl;
-}
+void imprimirDomicilioEmisorReceptor(Domicilio &dE, Domicilio &dR){
+    int tamanioColumna=39;
+    char cadena[10];
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|PAÍS   |" << dE.getPais();
+    espacios(strlen(dE.getPais()), tamanioColumna);
+    cout << dR.getPais();
+    espacios(strlen(dR.getPais()), tamanioColumna);
 
-void imprimirDomicilioReceptor(Domicilio &domicilioReceptor){
-    cout << domicilioReceptor.getPais() << endl;
-    cout << domicilioReceptor.getEstado() << endl;
-    cout << domicilioReceptor.getCiudad() << endl;
-    cout << domicilioReceptor.getColonia() << endl;
-    cout << domicilioReceptor.getCalle() << endl;
-    cout << domicilioReceptor.getNumero() << endl;
-    cout << domicilioReceptor.getCodigoPostal() << endl;
-}
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|ESTADO |" << dE.getEstado();
+    espacios(strlen(dE.getEstado()), tamanioColumna);
+    cout << dR.getEstado();
+    espacios(strlen(dR.getEstado()), tamanioColumna);
 
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|CIUDAD |" << dE.getCiudad();
+    espacios(strlen(dE.getCiudad()), tamanioColumna);
+    cout << dR.getCiudad();
+    espacios(strlen(dR.getCiudad()), tamanioColumna);
+
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|COLONIA|" << dE.getColonia();
+    espacios(strlen(dE.getColonia()), tamanioColumna);
+    cout << dR.getColonia();
+    espacios(strlen(dR.getColonia()), tamanioColumna);
+
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|CALLE  |" << dE.getCalle();
+    espacios(strlen(dE.getCalle()), tamanioColumna);
+    cout << dR.getCalle();
+    espacios(strlen(dR.getCalle()), tamanioColumna);
+
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|NUMERO |" << dE.getNumero();
+    espacios(strlen(convertirEnteroACadena(dE.getNumero(), cadena)), tamanioColumna);
+    cout << dR.getNumero();
+    espacios(strlen(convertirEnteroACadena(dR.getNumero(), cadena)), tamanioColumna);
+
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|CP     |" << dE.getCodigoPostal();
+    espacios(strlen(convertirEnteroACadena(dE.getCodigoPostal(), cadena)), tamanioColumna);
+    cout << dR.getCodigoPostal();
+    espacios(strlen(convertirEnteroACadena(dR.getCodigoPostal(), cadena)), tamanioColumna);
+}
 #endif // DOMICILIO_H_INCLUDED

@@ -4,21 +4,28 @@
 #define FACTURA_H_INCLUDED
 #define TAMANIO_NOMBRE_EMISOR 50
 #define TAMANIO_NOMBRE_RECEPTOR 50
-#define TAMANIO_TIPO_PERSONA_EMISOR 20
+#define TAMANIO_TIPO_PERSONA_EMISOR 35
 #define TAMANIO_RFC_EMISOR 25
 #define TAMANIO_RFC_RECEPTOR 25
-#define TAMANIO_TIPO_PERSONA_RECEPTOR 20
+#define TAMANIO_TIPO_PERSONA_RECEPTOR 35
 #define TAMANIO_HORA 10
 #define TAMANIO_NUMERO_FOLIO 15
 #define TAMANIO_RFC_MORAL 12
 #define TAMANIO_RFC_FISCAL 13
 #define PRODUCTOS_MAXIMOS 5
 #define FACTURAS_MAXIMAS 20
-
-#define TAMANIO_MORALES 25
-#define TAMANIO_FISCALES 25
-#define MAX_MORALES 2
+#define ANIO_FOLIO "2022"
+#define SEPARADOR_FOLIO_ANIO '-'
 #define MAX_FISCALES 5
+
+#define MORAL1 "Regimen General"
+#define MORAL2 "Sin Fines de Lucro"
+
+#define FISCAL1 "Asalariados"
+#define FISCAL2 "Honorarios"
+#define FISCAL3 "Arrendamientos de Inmuebles"
+#define FISCAL4 "Actividades Empresariales"
+#define FISCAL5 "Incorporacion Fiscal"
 
 #define C_0 0
 #define C_1 1
@@ -26,8 +33,9 @@
 #define C_3 3
 #define C_4 4
 #define C_5 5
-
-
+#define C_100 100
+#define ULTIMO_DECIMAL 9
+#define IVA 16
 
 class Factura{
     private:
@@ -38,7 +46,7 @@ class Factura{
         char RFCReceptor[TAMANIO_RFC_RECEPTOR+1];
         char tipoPersonaReceptor[TAMANIO_TIPO_PERSONA_RECEPTOR+1];
         char hora[TAMANIO_HORA+1];
-        char numeroFolio[TAMANIO_HORA+1];
+        char numeroFolio[TAMANIO_NUMERO_FOLIO+1];
         float subTotal;
         float total;
         float IVATotal;
@@ -79,14 +87,14 @@ class Factura{
         void setTipoPersonaEmisor(char* tPE){
             strcpy(this->tipoPersonaEmisor, tPE);
         }
-        char* getEmisorFiscal(){
+        char* getTipoPersonaEmisor(){
             return this->tipoPersonaEmisor;
         }
 
         void setNombreReceptor(char* nR){
             strcpy(this->nombreReceptor, nR);
         }
-        char* getNombreRecptor(){
+        char* getNombreReceptor(){
             return this->nombreReceptor;
         }
 
@@ -143,11 +151,9 @@ class Factura{
             productos[cantidadProductos]=producto;
             aumentarCantidadProductos();
         }
-
-        void getProducto(int indice){
-            imprimirProducto(*productos[indice]);
+        Producto* getProducto(int i){
+            return productos[i];
         }
-
 
         void aumentarCantidadProductos(){
             cantidadProductos++;
@@ -159,65 +165,69 @@ class Factura{
         void setDomicilioEmisor(Domicilio* dE){
             domicilioEmisor=dE;
         }
+        Domicilio* getDomicilioEmisor(){
+            return domicilioEmisor;
+        }
 
         void setDomicilioReceptor(Domicilio* dR){
             domicilioReceptor=dR;
         }
-
-        void getDomicilioEmisor(){
-            imprimirDomicilioEmisor(*domicilioEmisor);
-        }
-        void getDomicilioReceptor(){
-            imprimirDomicilioReceptor(*domicilioReceptor);
+        Domicilio* getDomicilioReceptor(){
+            return domicilioReceptor;
         }
 };
 
 int cantidadFacturas=0;
 Factura *facturas[FACTURAS_MAXIMAS];
+bool enviado[FACTURAS_MAXIMAS];
+int folioEntero1, folioEntero2;
+char folioChar[TAMANIO_NUMERO_FOLIO]={'0','0','-','2','0','2','2'};
 
-char morales[TAMANIO_MORALES][MAX_MORALES];
-char fiscales[TAMANIO_FISCALES][MAX_FISCALES];
-
+//Protipos de funciones para crear la factura
 void crearFactura();
-void inicializarArreglosMoralesFiscales();
 void registrarDatosEmisor();
 void registrarDatosReceptor();
-void registrarDatosAdicionales();
 int validarRFC(int longitud);
 void escogerMoralOFiscal(int tipoPersona, bool guardarEmisor);
-void registrarProducto();
 void registrarDomicilioEmisor();
 void registrarDomicilioReceptor();
+void registrarProducto();
+void generarFolio();
+void calcularTotal();
+
+//Protipos de funciones para imprimir la factura
+void imprimirFactura(int indice);
+void imprimirDatosEmisorReceptor(int indice);
+void recorrerArregloProducto(int indice);
+void imprimirCalculos(int indice);
+
+void enviarFactura(int indice);
+void mostrarFactura();
+void imprimirTablaBuscar();
+int buscarFactura();
+void ingresarFacturaBuscar();
+void ingresarEliminarFactura();
+void eliminarFactura(int indice);
 
 void crearFactura(){
     char vacio[]="";
-    inicializarArreglosMoralesFiscales();
     facturas[cantidadFacturas]=new Factura(vacio, vacio, vacio, vacio, vacio,
                                            vacio, vacio, vacio, 0.0, 0.0, 0.0);
     cin.get();
     registrarDatosEmisor();
     cin.get();
     registrarDomicilioEmisor();
-
     registrarDatosReceptor();
     cin.get();
     registrarDomicilioReceptor();
-
     registrarProducto();
-
-
+    system(CLEAR);
+    generarFolio();
+    calcularTotal();
+    imprimirFactura(cantidadFacturas);
+    enviarFactura(cantidadFacturas);
     cantidadFacturas++;
 
-}
-
-void inicializarArreglosMoralesFiscales(){
-    strcpy(morales[C_0], "Regimen General");
-    strcpy(morales[C_1], "Sin Fines de Lucro");
-    strcpy(fiscales[C_0], "Asalariados");
-    strcpy(fiscales[C_1], "Honorarios");
-    strcpy(fiscales[C_2], "Arrendamientos de Inmuebles");
-    strcpy(fiscales[C_3], "Actividades Empresariales");
-    strcpy(fiscales[C_4], "Incorporacion Fiscal");
 }
 
 void registrarDatosEmisor(){
@@ -237,62 +247,6 @@ void registrarDatosEmisor(){
 
 }
 
-int validarRFC(int longitud){
-    int tipoPersona;
-    if(longitud==TAMANIO_RFC_MORAL){
-        tipoPersona=1;
-    }else if(longitud==TAMANIO_RFC_FISCAL){
-        tipoPersona=2;
-    }else{
-        cout << "RFC no valido" << endl;
-        pausaDespuesDeGetline();
-        tipoPersona=0;
-    }
-    return tipoPersona;
-}
-
-void escogerMoralOFiscal(int tipoPersona, bool guardarEmisor){
-    int opcion;
-    if(tipoPersona==C_1){
-        do{
-            cout << "***PERSONAS MORALES***" << endl;
-            cout << "¿Que tipo se personas morales es?" << endl;
-            cout << "1)Régimen General" << endl;
-            cout << "2)Sin Fines De Lucro" << endl;
-            cout << "-> ";
-            cin >> opcion;
-            if(opcion!=C_1 && opcion!=C_2){
-                cout << "Opción no valida" << endl;
-            }
-        }while(opcion!=C_1 && opcion!=C_2);
-        if(guardarEmisor){
-            facturas[cantidadFacturas]->setTipoPersonaEmisor(morales[opcion-1]);
-        }else{
-            facturas[cantidadFacturas]->setTipoPersonaReceptor(morales[opcion-1]);
-        }
-    }else{
-        do{
-            cout << "***PERSONAS FISCALES***" << endl;
-            cout << "¿Que tipo se personas fiscales es?" << endl;
-            cout << "1)Persona Asalariada" << endl;
-            cout << "2)Honorarios" << endl;
-            cout << "3)Arrendamiento de Inmuebles" << endl;
-            cout << "4)Incorporación Fiscal" << endl;
-            cout << "5)Actividades Empresariales" << endl;
-            cout << "-> ";
-            cin >> opcion;
-            if(opcion<C_1 || opcion>C_5){
-                cout << "Opción no valida" << endl;
-            }
-        }while(opcion<C_1 || opcion>C_5);
-        if(guardarEmisor){
-            facturas[cantidadFacturas]->setTipoPersonaEmisor(fiscales[opcion-1]);
-        }else{
-            facturas[cantidadFacturas]->setTipoPersonaReceptor(fiscales[opcion-1]);
-        }
-    }
-}
-
 void registrarDatosReceptor(){
     char nombreReceptor[TAMANIO_NOMBRE_RECEPTOR+1], RFCReceptor[TAMANIO_RFC_RECEPTOR+1];
     int tipoPersona;
@@ -309,6 +263,82 @@ void registrarDatosReceptor(){
     facturas[cantidadFacturas]->setRFCReceptor(RFCReceptor);
 }
 
+int validarRFC(int longitud){
+    int tipoPersona;
+    if(longitud==TAMANIO_RFC_MORAL){
+        tipoPersona=1;
+    }else if(longitud==TAMANIO_RFC_FISCAL){
+        tipoPersona=2;
+    }else{
+        cout << "RFC no valido" << endl;
+        pausaDespuesDeGetline();
+        tipoPersona=0;
+    }
+    return tipoPersona;
+}
+
+void escogerMoralOFiscal(int tipoPersona, bool guardarEmisor){
+    int opcion;
+    char tipoPersonaOpcion[TAMANIO_TIPO_PERSONA_EMISOR];
+    if(tipoPersona==C_1){
+        do{
+            cout << "***PERSONAS MORALES***" << endl;
+            cout << "¿Que tipo se personas morales es?" << endl;
+            cout << "1)Régimen General" << endl;
+            cout << "2)Sin Fines De Lucro" << endl;
+            cout << "-> ";
+            cin >> opcion;
+            switch(opcion){
+                case C_1:   strcpy(tipoPersonaOpcion, MORAL1);    break;
+                case C_2:   strcpy(tipoPersonaOpcion, MORAL2);    break;
+                default:    cout << "Opción no valida" << endl;
+            }
+        }while(opcion!=C_1 && opcion!=C_2);
+        if(guardarEmisor){
+            facturas[cantidadFacturas]->setTipoPersonaEmisor(tipoPersonaOpcion);
+        }else{
+            facturas[cantidadFacturas]->setTipoPersonaReceptor(tipoPersonaOpcion);
+        }
+    }else{
+        do{
+            cout << "***PERSONAS FISCALES***" << endl;
+            cout << "¿Que tipo se personas fiscales es?" << endl;
+            cout << "1)Persona Asalariada" << endl;
+            cout << "2)Honorarios" << endl;
+            cout << "3)Arrendamiento de Inmuebles" << endl;
+            cout << "4)Incorporación Fiscal" << endl;
+            cout << "5)Actividades Empresariales" << endl;
+            cout << "-> ";
+            cin >> opcion;
+            switch(opcion){
+                case C_1:   strcpy(tipoPersonaOpcion, FISCAL1);     break;
+                case C_2:   strcpy(tipoPersonaOpcion, FISCAL2);     break;
+                case C_3:   strcpy(tipoPersonaOpcion, FISCAL3);     break;
+                case C_4:   strcpy(tipoPersonaOpcion, FISCAL4);     break;
+                case C_5:   strcpy(tipoPersonaOpcion, FISCAL5);     break;
+                default:    cout << "Opción no valida" << endl;
+            }
+        }while(opcion<C_1 || opcion>C_5);
+        if(guardarEmisor){
+            facturas[cantidadFacturas]->setTipoPersonaEmisor(tipoPersonaOpcion);
+        }else{
+            facturas[cantidadFacturas]->setTipoPersonaReceptor(tipoPersonaOpcion);
+        }
+    }
+}
+
+void registrarDomicilioEmisor(){
+    facturas[cantidadFacturas]->setDomicilioEmisor(capturarDomicilio());
+    pausa();
+    system(CLEAR);
+}
+
+void registrarDomicilioReceptor(){
+    facturas[cantidadFacturas]->setDomicilioReceptor(capturarDomicilio());
+    pausa();
+    system(CLEAR);
+}
+
 void registrarProducto(){
     int opcion;
     do{
@@ -317,24 +347,203 @@ void registrarProducto(){
         cin >> opcion;
         if(facturas[cantidadFacturas]->getCantidadProductos()==3){
             cout << "Limite de productos alcanzados" << endl;
+        }else if(opcion==C_1){
+            system(CLEAR);
         }
-        system(CLEAR);
     }while(opcion==C_1 && facturas[cantidadFacturas]->getCantidadProductos()!=3);
-    //facturas[cantidadFacturas]->getProducto(0);
-    //facturas[cantidadFacturas]->getProducto(1);
 }
 
-void registrarDomicilioEmisor(){
-    int opcion;
-    facturas[cantidadFacturas]->setDomicilioEmisor(capturarDomicilio());
-    //facturas[cantidadFacturas]->getDomicilioEmisor();
-    pausa();
+void generarFolio(){
+    if (folioEntero1<ULTIMO_DECIMAL){
+        folioEntero1++;
+    }else if (folioEntero2<ULTIMO_DECIMAL){
+        folioEntero1=0;
+        folioEntero2++;
+    }
+    folioChar[C_0]=folioEntero2+'0'; //Se le suma el caracter 0 para convertirlo de entero a caracter
+    folioChar[C_1]=folioEntero1+'0'; //Se le suma el caracter 0 para convertirlo de entero a caracter
+    facturas[cantidadFacturas]->setNumeroFolio(folioChar);
 }
-void registrarDomicilioReceptor(){
+
+void calcularTotal(){
+    float subtotal, Iva, total;
+    subtotal=0;
+    for(int i=0; i<facturas[cantidadFacturas]->getCantidadProductos();i++){
+        subtotal=subtotal+retornarImporte(*facturas[cantidadFacturas]->getProducto(i));
+    }
+    Iva=(float)(subtotal*IVA)/C_100;
+    total=subtotal+Iva;
+    facturas[cantidadFacturas]->setSubTotal(subtotal);
+    facturas[cantidadFacturas]->setIVATotal(Iva);
+    facturas[cantidadFacturas]->setTotal(total);
+}
+
+void imprimirFactura(int indice){
+    imprimirDatosEmisorReceptor(indice);
+    imprimirDomicilioEmisorReceptor(*facturas[indice]->getDomicilioEmisor(),
+                                    *facturas[indice]->getDomicilioReceptor());
+    recorrerArregloProducto(indice);
+    imprimirCalculos(indice);
+}
+
+void imprimirDatosEmisorReceptor(int indice){
+    int tamanioColumna=39;
+    cout << "|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|           FACTURA           |                        FOLIO:";
+    cout << facturas[indice]->getNumeroFolio() <<"                    |"<<endl;
+    cout << "|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|       |\t\tEMISOR\t\t\t|\t\tRECEPTOR\t\t|" << endl;
+    cout << "|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|Nombre |" << facturas[indice]->getNombreEmisor();
+    espacios(strlen(facturas[indice]->getNombreEmisor()), tamanioColumna);
+    cout << facturas[indice]->getNombreReceptor();
+    espacios(strlen(facturas[indice]->getNombreReceptor()), tamanioColumna);
+
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|RFC    |" << facturas[indice]->getRFCEmisor();
+    espacios(strlen(facturas[indice]->getRFCEmisor()), tamanioColumna);
+    cout << facturas[indice]->getRFCReceptor();
+    espacios(strlen(facturas[indice]->getRFCReceptor()), tamanioColumna);
+
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|PERSONA|" << facturas[indice]->getTipoPersonaEmisor();
+    espacios(strlen(facturas[indice]->getTipoPersonaEmisor()), tamanioColumna);
+    cout << facturas[indice]->getTipoPersonaReceptor();
+    espacios(strlen(facturas[indice]->getTipoPersonaReceptor()), tamanioColumna);
+}
+
+void recorrerArregloProducto(int indice){
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|=======================================================================================|"<<endl;
+    cout << "|\t\t\t\t\t PRODUCTOS\t\t\t\t        |\n";
+    for(int i=0; i<facturas[indice]->getCantidadProductos();i++){
+        cout << "|---------------------------------------------------------------------------------------|"<<endl;
+        imprimirProducto(*facturas[indice]->getProducto(i));
+        if(i+1!=facturas[indice]->getCantidadProductos()){
+            cout << "\n|---------------------------------------------------------------------------------------|\n";
+        }else{
+            cout << "\n|=======================================================================================|\n";
+        }
+    }
+}
+
+void imprimirCalculos(int indice){
+    int tamanioColumna=76;
+    char cadena[10];
+    cout << "|\t\t\t\t\t   PAGO   \t\t\t\t        |\n";
+    cout << "|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|SUBTOTAL|" << facturas[indice]->getSubTotal();
+    espacios(strlen(convertirEnteroACadena(facturas[indice]->getSubTotal(), cadena)), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|IVA     |" << facturas[indice]->getIVATotal();
+    espacios(strlen(convertirEnteroACadena(facturas[indice]->getIVATotal(), cadena)), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|TOTAL   |" << facturas[indice]->getTotal();
+    espacios(strlen(convertirEnteroACadena(facturas[indice]->getTotal(), cadena)), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+}
+
+void enviarFactura(int indice){
     int opcion;
-    facturas[cantidadFacturas]->setDomicilioReceptor(capturarDomicilio());
-    //facturas[cantidadFacturas]->getDomicilioReceptor();
-    pausa();
+    if(!enviado[indice]){
+        cout << "Quieres enviar la factura? 1)Si  Otro numero)No \n-> ";
+        cin >> opcion;
+        if(opcion==C_1){
+            cout << "Factura enviada" << endl;
+            enviado[indice]=true;
+        }else{
+            cout << "Factura no enviada" << endl;
+        }
+        cin.get();
+    }else{
+        cout << "La factura ya se ha enviado" << endl;
+    }
+}
+
+void mostrarFactura(){
+    int indice;
+    indice=buscarFactura();
+    if(indice>=C_0){
+        system(CLEAR);
+        imprimirFactura(indice);
+    }else if(cantidadFacturas!=C_0){
+        cout << "No existe ese numero de folio" << endl;
+    }
+}
+
+void imprimirTablaBuscar(){
+    int tamanioColumna;
+    tamanioColumna=18;
+    cout << "|-----------------------------------------------------------------------|"<<endl;
+    cout << "|\tFOLIO\t\t|\tNombre\t\t|\tDescripción\t|" << endl;
+    cout << "|-----------------------------------------------------------------------|"<<endl;
+    for(int i=0; i<cantidadFacturas; i++){
+        for(int j=0; j<facturas[i]->getCantidadProductos(); j++){
+            cout << "|" << facturas[i]->getNumeroFolio();
+            espacios(strlen(facturas[i]->getNumeroFolio()), tamanioColumna);
+            cout << facturas[i]->getNombreEmisor();
+            espacios(strlen(facturas[i]->getNombreEmisor()), tamanioColumna);
+            cout << retornarDescripcion(*facturas[i]->getProducto(j));
+            espacios(strlen(retornarDescripcion(*facturas[i]->getProducto(j))), tamanioColumna);
+            cout << endl;
+        }
+        cout << "|-----------------------------------------------------------------------|"<<endl;
+    }
+}
+
+int buscarFactura(){
+    char folioBuscado[TAMANIO_NUMERO_FOLIO+1];
+    int indiceFolioEncontrado;
+    indiceFolioEncontrado=-1;
+    if(cantidadFacturas!=C_0){
+        imprimirTablaBuscar();
+        cout << "Ingresa el folio de la factura que quieres ver \n-> ";
+        cin.get();
+        cin.getline(folioBuscado, TAMANIO_NUMERO_FOLIO+1);
+        for(int i=0; i<cantidadFacturas && indiceFolioEncontrado<C_0; i++){
+            if(!strcmp(facturas[i]->getNumeroFolio(), folioBuscado)){
+                indiceFolioEncontrado=i;
+            }
+        }
+    }else{
+        cout << "No hay ninguna factura registrada" << endl;
+    }
+    return indiceFolioEncontrado;
+}
+
+void ingresarFacturaBuscar(){
+    int indice;
+    indice=buscarFactura();
+    if(indice>=C_0){
+        system(CLEAR);
+        imprimirFactura(indice);
+        enviarFactura(indice);
+    }else if(cantidadFacturas!=C_0){
+        cout << "No existe ese numero de folio" << endl;
+    }
+}
+
+void ingresarEliminarFactura(){
+    int indice;
+    indice=buscarFactura();
+    if(indice>=C_0){
+        system(CLEAR);
+        imprimirFactura(indice);
+        eliminarFactura(indice);
+    }else if(cantidadFacturas!=C_0){
+        cout << "No existe ese numero de folio" << endl;
+    }
+}
+
+void eliminarFactura(int indice){
+    while(indice<cantidadFacturas){
+        facturas[indice]=facturas[indice+1];
+        indice++;
+    }
+    facturas[indice]=nullptr;
+    delete facturas[indice];
+    cantidadFacturas--;
+    cout << "Factura eliminada" << endl;
 }
 
 #endif // FACTURA_H_INCLUDED

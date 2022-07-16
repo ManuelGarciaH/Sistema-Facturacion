@@ -56,7 +56,7 @@ int main()
                 default:            cout << "Opción no valida" << endl;
             }
             if(opcion!=CERRAR_SESION){
-                pausa();
+                pausaDespuesDeGetline();
             }
         }while(indiceUsuarioAccedido>=C_0);
     }
@@ -101,6 +101,11 @@ void inicializar(){
     usuarios[C_1]=new Usuario((char*)USUARIO2, (char*)CLAVE2, (char*)PUESTO2, C_0);
     usuarios[C_2]=new Usuario((char*)USUARIO3, (char*)CLAVE3, (char*)PUESTO3, C_0);
     generarBaseDeDatos();
+    folioEntero1=0;
+    folioEntero2=0;
+    for(int i=0; i<FACTURAS_MAXIMAS; i++){
+        enviado[i]=false;
+    }
 }
 
 void iniciarSesion(){
@@ -159,7 +164,7 @@ void validarUsuarioOpcionCrear(){
 
 void validarUsuarioOpcionMostrar(){
     if(indiceUsuarioAccedido!=C_2){
-        cout << "Mostrar factura" << endl;
+        mostrarFactura();
     }else{
         cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
     }
@@ -167,7 +172,7 @@ void validarUsuarioOpcionMostrar(){
 
 void validarUsuarioOpcionEnviar(){
     if(indiceUsuarioAccedido!=C_0){
-        cout << "Enviar factura" << endl;
+        ingresarFacturaBuscar();
     }else{
         cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
     }
@@ -175,7 +180,7 @@ void validarUsuarioOpcionEnviar(){
 
 void validarUsuarioOpcionEliminar(){
     if(indiceUsuarioAccedido!=C_2){
-        cout << "Eliminar factura" << endl;
+        ingresarEliminarFactura();
     }else{
         cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
     }

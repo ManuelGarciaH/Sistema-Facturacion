@@ -62,41 +62,42 @@ Producto *basedeDatosProductos[TAMANIO_BASE_DE_DATOS_PRODUCTOS];
 
 void generarBaseDeDatos();
 Producto* capturarProducto();
-void imprimirTitulosColumnas();
 int preguntarCantidadProductos();
-
+int retornarImporte(Producto& p);
+char* retornarDescripcion(Producto& p);
 
 void generarBaseDeDatos(){
     char vacio[]="";
     for(int i=0; i<TAMANIO_BASE_DE_DATOS_PRODUCTOS; i++){
         basedeDatosProductos[i]=new Producto(vacio, 0.0, 0.0, 0, 0);
     }
-    basedeDatosProductos[0]->setDescripcion("Chaqueta");
-    basedeDatosProductos[0]->setImporte(10.00);
+    basedeDatosProductos[0]->setDescripcion((char*)"Chaqueta");
+    basedeDatosProductos[0]->setImporte(0.0);
     basedeDatosProductos[0]->setPrecioUnitario(5.00);
     basedeDatosProductos[0]->setClave(1);
 
-    basedeDatosProductos[1]->setDescripcion("Camiseta");
-    basedeDatosProductos[1]->setImporte(15.00);
+    basedeDatosProductos[1]->setDescripcion((char*)"Camiseta");
+    basedeDatosProductos[1]->setImporte(0.0);
     basedeDatosProductos[1]->setPrecioUnitario(7.00);
     basedeDatosProductos[1]->setClave(2);
 
-    basedeDatosProductos[2]->setDescripcion("Pantalon");
-    basedeDatosProductos[2]->setImporte(8.00);
+    basedeDatosProductos[2]->setDescripcion((char*)"Pantalon");
+    basedeDatosProductos[2]->setImporte(0.0);
     basedeDatosProductos[2]->setPrecioUnitario(4.00);
     basedeDatosProductos[2]->setClave(3);
 }
 
 void imprimirBaseDeDatos(){
-    cout << "\t\t\t***BASE DE DATOS***" << endl;
-    imprimirTitulosColumnas();
+    cout << "\t\t***BASE DE DATOS***" << endl;
+    cout << "|-----------------------------------------------|" << endl;
+    cout << "|Clave\t|Descripcion\t\t|Precio unitario|" << endl;
+    cout << "|-----------------------------------------------|" << endl;
     for(int i=0; i<TAMANIO_BASE_DE_DATOS_PRODUCTOS; i++){
         cout << "|" << basedeDatosProductos[i]->getClave() << "\t|";
         cout << basedeDatosProductos[i]->getDescripcion();
         espacios(strlen(basedeDatosProductos[i]->getDescripcion()), TAMANIO_DESCRIPCION_PRODUCTO+4);
-        cout << basedeDatosProductos[i]->getImporte() << "\t\t|";
         cout << basedeDatosProductos[i]->getPrecioUnitario() << "\t\t|" << endl;
-        cout << "|---------------------------------------------------------------|" << endl;
+        cout << "|-----------------------------------------------|" << endl;
     }
 }
 
@@ -113,9 +114,9 @@ Producto* capturarProducto(){
         if(opcion >= 0 && opcion <= 2){
             clave=basedeDatosProductos[opcion]->getClave();
             strcpy(descripcion, basedeDatosProductos[opcion]->getDescripcion());
-            importe=basedeDatosProductos[opcion]->getImporte();
             precioUnitario=basedeDatosProductos[opcion]->getPrecioUnitario();
             cantidad=preguntarCantidadProductos();
+            importe=precioUnitario*cantidad;
             cout << "Producto guardado" << endl;
             pausa();
         }else{
@@ -125,24 +126,6 @@ Producto* capturarProducto(){
         system(CLEAR);
     }while(opcion < 0 || opcion > 2);
     return new Producto(descripcion, importe, precioUnitario, clave, cantidad);
-}
-
-void imprimirProducto(Producto& producto){
-    imprimirTitulosColumnas();
-    for(int i=0; i<TAMANIO_BASE_DE_DATOS_PRODUCTOS; i++){
-        cout << "|" << producto.getClave() << "\t|";
-        cout << producto.getDescripcion();
-        espacios(strlen(producto.getDescripcion()), TAMANIO_DESCRIPCION_PRODUCTO+4);
-        cout << producto.getImporte() << "\t\t|";
-        cout << producto.getPrecioUnitario() << "\t\t|" << endl;
-        cout << "|---------------------------------------------------------------|" << endl;
-    }
-}
-
-void imprimirTitulosColumnas(){
-    cout << "|---------------------------------------------------------------|" << endl;
-    cout << "|Clave\t|Descripcion\t\t|Importe\t|Precio unitario|" << endl;
-    cout << "|---------------------------------------------------------------|" << endl;
 }
 
 int preguntarCantidadProductos(){
@@ -156,6 +139,33 @@ int preguntarCantidadProductos(){
         }
     }while(cantidadProductos<=0);
     return cantidadProductos;
+}
+
+void imprimirProducto(Producto& p){
+    int tamanioColumna=68;
+    char cadena[10];
+    cout << "|DESCRIPCION    |" << p.getDescripcion();
+    espacios(strlen(p.getDescripcion()), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|CLAVE          |" << p.getClave();
+    espacios(strlen(convertirEnteroACadena(p.getClave(), cadena)), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|PRECIO UNITARIO|" << p.getPrecioUnitario();
+    espacios(strlen(convertirEnteroACadena(p.getPrecioUnitario(), cadena)), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|CANTIDAD       |" << p.getCantidad();
+    espacios(strlen(convertirEnteroACadena(p.getCantidad(), cadena)), tamanioColumna);
+    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "|IMPORTE        |" << p.getImporte();
+    espacios(strlen(convertirEnteroACadena(p.getImporte(), cadena)), tamanioColumna);
+}
+
+int retornarImporte(Producto& p){
+    return p.getImporte();
+}
+
+char* retornarDescripcion(Producto& p){
+    return p.getDescripcion();
 }
 
 #endif // PRODUCTO_H_INCLUDED
