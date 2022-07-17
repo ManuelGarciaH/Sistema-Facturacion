@@ -4,6 +4,7 @@
 #include "usuario.h"
 #include "factura.h"
 #include "producto.h"
+#include "text arts.h"
 
 #define USUARIOS_MAXIMOS 3
 
@@ -35,6 +36,7 @@ void validarUsuarioOpcionCrear();
 void validarUsuarioOpcionMostrar();
 void validarUsuarioOpcionEnviar();
 void validarUsuarioOpcionEliminar();
+void pantallaMenuFacturacion();
 
 int main()
 {
@@ -56,6 +58,7 @@ int main()
                 default:            cout << "Opción no valida" << endl;
             }
             if(opcion!=CERRAR_SESION){
+                cout << "\t\t\t\t\t\t";
                 pausaDespuesDeGetline();
             }
         }while(indiceUsuarioAccedido>=C_0);
@@ -66,21 +69,20 @@ int main()
 
 int menuFacturas(){
     int opcion;
-    cout << "1) Crear factura" << endl;
-    cout << "2) Mostrar factura" << endl;
-    cout << "3) Enviar factura" << endl;
-    cout << "4) Eliminar factura" << endl;
-    cout << "5) Cerrar del sistema" << endl;
-    cout << "-> ";
+    pantallaMenuFacturacion();
+    cout << "\t\t\t\t1) Crear factura" << endl;
+    cout << "\t\t\t\t2) Mostrar factura" << endl;
+    cout << "\t\t\t\t3) Enviar factura" << endl;
+    cout << "\t\t\t\t4) Eliminar factura" << endl;
+    cout << "\t\t\t\t5) Cerrar del sistema" << endl;
+    cout << "\t\t\t\t-> ";
     cin >> opcion;
     return opcion;
 }
 
 void menuInicial(){
     int opcion;
-    cout << "1)Iniciar sesion" << endl;
-    cout << "Otro) Salir" << endl;
-    cout << "-> ";
+    presentacionPantallaInicial();
     cin  >> opcion;
     system(CLEAR);
     if(opcion==C_1){
@@ -115,9 +117,10 @@ void iniciarSesion(){
     cantidadIntentos=3;
     do{
         accesoConcedido=false;
-        cout << "Usuario: ";
+        cout << "\n\n\n\n\n\n\n\n\n";
+        cout << "\t\t\t\t\t\tUSUARIO: ";
         cin.getline(usuario, TAMANIO_NOMBRE_USUARIO+1);
-        cout << "Contraseña: ";
+        cout << "\t\t\t\t\t\tCONTRASEÑA: ";
         cin.getline(clave, TAMANIO_CLAVE_USUARIO+1);
         for(int i=0; i<USUARIOS_MAXIMOS && !accesoConcedido; i++){
             if(!strcmpi(usuario, usuarios[i]->getNombre())
@@ -129,17 +132,19 @@ void iniciarSesion(){
             }
         }
         if(accesoConcedido){
-            cout << "Acceso concedido, bienvenido" << endl;
+            cout << "\t\t\t\t\t\tAcceso concedido, bienvenido" << endl;
+            cout << "\t\t\t\t\t\t";
             pausaDespuesDeGetline();
             system(CLEAR);
         }else{
-            cout << "Error, usuario y/o contraseña no validos" << endl;
-            cout << "Intentos restantes " << cantidadIntentos-1 << endl;
+            cout << "\t\t\t\t\t\tError, usuario y/o contraseña no validos" << endl;
+            cout << "\t\t\t\t\t\tIntentos restantes " << cantidadIntentos-1 << endl;
+            cout << "\t\t\t\t\t\t";
             pausaDespuesDeGetline();
             system(CLEAR);
             cantidadIntentos--;
             if(cantidadIntentos==C_0){
-                cout << "Limite de intentos alcanzado, inicio de sesión bloqueado\n";
+                cout << "\t\t\t\t\t\tLimite de intentos alcanzado, inicio de sesión bloqueado\n";
                 indiceUsuarioAccedido=-1;
             }
         }
@@ -147,7 +152,8 @@ void iniciarSesion(){
 }
 
 void cerrarSesion(){
-    cout << "Cerrando sesion de " << usuarios[indiceUsuarioAccedido]->getNombre() << endl;
+    cout << "\t\t\t\t\t\tCerrando sesion de " << usuarios[indiceUsuarioAccedido]->getNombre() << endl;
+    cout << "\t\t\t\t\t\t";
     pausa();
     system(CLEAR);
     indiceUsuarioAccedido=-1;
@@ -158,7 +164,7 @@ void validarUsuarioOpcionCrear(){
     if(indiceUsuarioAccedido!=C_0){
         crearFactura();
     }else{
-        cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
+        cout << "\t\t\t\t\t\tSu tipo de usuario no tiene permitido usar esta opción" << endl;
     }
 }
 
@@ -166,7 +172,7 @@ void validarUsuarioOpcionMostrar(){
     if(indiceUsuarioAccedido!=C_2){
         mostrarFactura();
     }else{
-        cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
+        cout << "\t\t\t\t\t\tSu tipo de usuario no tiene permitido usar esta opción" << endl;
     }
 }
 
@@ -174,7 +180,7 @@ void validarUsuarioOpcionEnviar(){
     if(indiceUsuarioAccedido!=C_0){
         ingresarFacturaBuscar();
     }else{
-        cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
+        cout << "\t\t\t\t\t\tSu tipo de usuario no tiene permitido usar esta opción" << endl;
     }
 }
 
@@ -182,6 +188,24 @@ void validarUsuarioOpcionEliminar(){
     if(indiceUsuarioAccedido!=C_2){
         ingresarEliminarFactura();
     }else{
-        cout << "Su tipo de usuario no tiene permitido usar esta opción" << endl;
+        cout << "\t\t\t\t\t\tSu tipo de usuario no tiene permitido usar esta opción" << endl;
     }
+}
+
+void pantallaMenuFacturacion(){
+    int tamanioPuestoNombre, tamanioColumna;
+    tamanioPuestoNombre=1;
+    tamanioColumna=28;
+    cout << "\n\n";
+    cout << "\t\t\t _______________________________________________________________________ " << endl;
+    cout << "\t\t\t|                                                                       |" << endl;
+    cout << "\t\t\t|     BIENVENIDO AL SISTEMA DE FACTURACIÓN ";
+    cout << usuarios[indiceUsuarioAccedido]->getPuesto();
+    tamanioPuestoNombre=tamanioPuestoNombre+strlen(usuarios[indiceUsuarioAccedido]->getPuesto());
+    cout << " " << usuarios[indiceUsuarioAccedido]->getNombre();
+    tamanioPuestoNombre=tamanioPuestoNombre+strlen(usuarios[indiceUsuarioAccedido]->getNombre());
+    espacios(tamanioPuestoNombre, tamanioColumna);
+    cout << "\n\t\t\t|_______________________________________________________________________|" << endl;
+    cout << "\n\n\n\n\n\n\n";
+
 }

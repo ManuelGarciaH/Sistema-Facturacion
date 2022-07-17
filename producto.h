@@ -88,16 +88,16 @@ void generarBaseDeDatos(){
 }
 
 void imprimirBaseDeDatos(){
-    cout << "\t\t***BASE DE DATOS***" << endl;
-    cout << "|-----------------------------------------------|" << endl;
-    cout << "|Clave\t|Descripcion\t\t|Precio unitario|" << endl;
-    cout << "|-----------------------------------------------|" << endl;
+    cout << "\t\t\t\t\t***BASE DE DATOS***" << endl;
+    cout << "\t\t\t\t|-----------------------------------------------|" << endl;
+    cout << "\t\t\t\t|Clave\t|Descripcion\t\t|Precio unitario|" << endl;
+    cout << "\t\t\t\t|-----------------------------------------------|" << endl;
     for(int i=0; i<TAMANIO_BASE_DE_DATOS_PRODUCTOS; i++){
-        cout << "|" << basedeDatosProductos[i]->getClave() << "\t|";
+        cout << "\t\t\t\t|" << basedeDatosProductos[i]->getClave() << "\t|";
         cout << basedeDatosProductos[i]->getDescripcion();
         espacios(strlen(basedeDatosProductos[i]->getDescripcion()), TAMANIO_DESCRIPCION_PRODUCTO+4);
         cout << basedeDatosProductos[i]->getPrecioUnitario() << "\t\t|" << endl;
-        cout << "|-----------------------------------------------|" << endl;
+        cout << "\t\t\t\t|-----------------------------------------------|" << endl;
     }
 }
 
@@ -108,7 +108,8 @@ Producto* capturarProducto(){
     int clave, cantidad;
     do{
         imprimirBaseDeDatos();
-        cout << "Ingresa la clave del producto deseado" << endl << "-> ";
+        cout << "\t\t\t\t\tIngresa la clave del producto deseado" << endl;
+        cout << "\t\t\t\t\t-> ";
         cin >> opcion;
         opcion--;
         if(opcion >= 0 && opcion <= 2){
@@ -117,10 +118,10 @@ Producto* capturarProducto(){
             precioUnitario=basedeDatosProductos[opcion]->getPrecioUnitario();
             cantidad=preguntarCantidadProductos();
             importe=precioUnitario*cantidad;
-            cout << "Producto guardado" << endl;
+            cout << "\t\t\t\t\t\tProducto guardado" << endl;
             pausa();
         }else{
-            cout << "Opción no valida" << endl;
+            cout << "\t\t\t\t\t\tOpción no valida" << endl;
             pausa();
         }
         system(CLEAR);
@@ -132,10 +133,10 @@ int preguntarCantidadProductos(){
     int cantidadProductos;
     do{
         system(CLEAR);
-        cout << "Cuantos productos vas a querer?\n -> ";
+        cout << "\t\t\t\t\t\tCuantos productos vas a querer?\n -> ";
         cin >> cantidadProductos;
         if(cantidadProductos<=0){
-            cout << "Cantidad no valida" << endl;
+            cout << "\t\t\t\t\t\tCantidad no valida" << endl;
         }
     }while(cantidadProductos<=0);
     return cantidadProductos;
@@ -144,19 +145,19 @@ int preguntarCantidadProductos(){
 void imprimirProducto(Producto& p){
     int tamanioColumna=68;
     char cadena[10];
-    cout << "|DESCRIPCION    |" << p.getDescripcion();
+    cout << "\t\t\t\t\t\t|DESCRIPCION    |" << p.getDescripcion();
     espacios(strlen(p.getDescripcion()), tamanioColumna);
-    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
-    cout << "|CLAVE          |" << p.getClave();
+    cout << "\n\t\t\t\t\t\t|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "\t\t\t\t\t\t|CLAVE          |" << p.getClave();
     espacios(strlen(convertirEnteroACadena(p.getClave(), cadena)), tamanioColumna);
-    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
-    cout << "|PRECIO UNITARIO|" << p.getPrecioUnitario();
+    cout << "\n\t\t\t\t\t\t|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "\t\t\t\t\t\t|PRECIO UNITARIO|" << p.getPrecioUnitario();
     espacios(strlen(convertirEnteroACadena(p.getPrecioUnitario(), cadena)), tamanioColumna);
-    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
-    cout << "|CANTIDAD       |" << p.getCantidad();
+    cout << "\n\t\t\t\t\t\t|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "\t\t\t\t\t\t|CANTIDAD       |" << p.getCantidad();
     espacios(strlen(convertirEnteroACadena(p.getCantidad(), cadena)), tamanioColumna);
-    cout << "\n|---------------------------------------------------------------------------------------|"<<endl;
-    cout << "|IMPORTE        |" << p.getImporte();
+    cout << "\n\t\t\t\t\t\t|---------------------------------------------------------------------------------------|"<<endl;
+    cout << "\t\t\t\t\t\t|IMPORTE        |" << p.getImporte();
     espacios(strlen(convertirEnteroACadena(p.getImporte(), cadena)), tamanioColumna);
 }
 
